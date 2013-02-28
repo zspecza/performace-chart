@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <title>Intensity Graph</title>
+    <style>
+
+      #title {
+        margin: 0 auto;
+      }
+
+      h1 {
+        font: 2.25em Arial, sans-serif;
+        color: #222;
+        margin: 0;
+        padding: 0;
+        margin-bottom: 10px;
+        text-align: center;
+      }
+
+      .wrapper {
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      #intensity {
+        width: 1210px;
+        height: 340px;
+        padding: 20px;
+        border: 5px solid #222;
+        margin: 0 auto;
+      }
+
+      #intensity p.square {
+        display: inline-block;
+        width: 150px;
+        height: 150px;
+        margin: 5px;
+        color: #222;
+        font: 20px Arial, sans-serif;
+        text-align: center;
+        line-height: 150px;
+        font-weight: bold;
+        border: 5px solid #222;
+        border-radius: 80px;
+        background: #222;
+      }
+
+      p {
+        text-align: center;
+        font-family: Arial;
+      }
+
+    </style>
+  </head>
+
+  <body>
+
+    <div class="wrapper">
+
+      <div id="title"><h1>Dynamically Changing Colours to Visualize Intensity of Data</h1></div>
+
+      <p>The dataset used to generate these circles is a simple Javascript array.</p>
+      <p>In this example, each value/index of the array is randomly generated between 0 and 500.</p>
+      <p>It's important to note that the data intensity (calculated as an output range in percentages) is relative. Essentially, the data is 'scaled down' from a range of 0 - (max value in data) to a range of 0 - 100.</p>
+
+      <div id="intensity"></div>
+
+    </div>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://raw.github.com/davatron5000/FitText.js/master/jquery.fittext.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script>
+
+      $(document).ready(function(){
+
+      });
+
+      var dataset = [];
+      var i = 0;
+      for (i=0; i<14; i++) {
+        dataset.push(Math.round(Math.random() * 500));
+      }
+      var scale = d3.scale.linear()
+        .domain([0, d3.max(dataset, function(d){ return d; })])
+        .range([0, 100]);
+      var saturation = d3.scale.linear()
+        .domain([0, d3.max(dataset, function(d){ return d; })])
+        .range([0.5, 1]);
+      var brightness = d3.scale.linear()
+        .domain([0, d3.max(dataset, function(d){ return d; })])
+        .range([0.5, 0.8]);
+              
+      d3.select('#intensity').selectAll('p')
+        .data(dataset)
+        .enter()
+        .append('p')
+        .attr('class', 'square').transition().duration(3000)
+        .style('background', function(d){
+          return d3.hsl(scale(d), saturation(d), brightness(d)).rgb();
+        })
+        .text(function(d){
+          return d + " (" + Math.round(scale(d)) + "%)";
+        });
+
+    </script>
+
+  </body>
+
+</html>
